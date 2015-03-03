@@ -24,6 +24,17 @@ layer suitable for browsing or as an overlay in a tool like QGIS, iD, or JOSM.
 That's basically it. Obviously additional features / tweaks complete the
 picture, which is where you come in.
 
+## Project Breakdown
+
+* The live site (fp-legacy): [fieldpapers.org](http://fieldpapers.org/)
+* The dev site (fp-web, some parts are currently expected to be broken): [stamen-fieldpapers-dev.herokuapp.com](http://stamen-fieldpapers-dev.herokuapp.com)
+* [The translation project on Transifex](https://www.transifex.com/projects/p/fieldpapers/)
+* [fp-web](https://github.com/fieldpapers/fp-web) - the updated website (Ruby/Rails)
+* [fp-scanner](https://github.com/fieldpapers/fp-scanner) - the updated scanning / rectification tools (EXPERIMENTAL)
+* [fp-printer](https://github.com/fieldpapers/fp-printer) - the updated atlas-creation pipeline (EXPERIMENTAL)
+* [fp-legacy](https://github.com/fieldpapers/fp-legacy) - the existing site, scanning, and atlas creation pipelines
+* [fieldpapers](https://github.com/fieldpapers/fieldpapers) - the umbrella project, for tracking issues, etc.
+
 ## For Multi-lingual Individuals
 
 Field Papers is often used on the ground in disaster-stricken areas and the
