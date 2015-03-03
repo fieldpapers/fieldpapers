@@ -33,6 +33,10 @@ Transifex](https://www.transifex.com/projects/p/fieldpapers/) that you can
 contribute to. Even partial translations are better than none, so let's get
 started!
 
+Web site translation status:
+
+[![Translation Status (www)](https://www.transifex.com/projects/p/fieldpapers/resource/www/chart/image_png)](https://www.transifex.com/projects/p/fieldpapers/resource/www/)
+
 ## For Web Developers
 
 The Field Papers web site is a standard Rails application, chosen to minimize
