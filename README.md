@@ -42,6 +42,10 @@ account management). The front-end is similarly intended to be simple, with the
 majority of effort spent on configuring and extended
 [Leaflet](http://leafletjs.com/) for our purposes.
 
+Have a look at the [issue list](https://github.com/fieldpapers/fieldpapers/issues)
+and see if there are things that appeal or seem doable. If there's insufficient
+information, ask for more!
+
 ## For Designers
 
 Field Papers' current design represents its minimalist past. While we intend to
