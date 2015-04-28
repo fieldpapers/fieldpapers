@@ -29,7 +29,7 @@ picture, which is where you come in.
 ## Project Breakdown
 
 * The live site (fp-legacy): [fieldpapers.org](http://fieldpapers.org/)
-* The dev site (fp-web, some parts are currently expected to be broken): [stamen-fieldpapers-dev.herokuapp.com](http://stamen-fieldpapers-dev.herokuapp.com)
+* The dev site (fp-web, some parts are currently expected to be broken): [stamen-fieldpapers-dev.herokuapp.com](http://next.fieldpapers.org/)
 * [The translation project on Transifex](https://www.transifex.com/projects/p/fieldpapers/)
 * [fp-web](https://github.com/fieldpapers/fp-web) - the updated website (Ruby/Rails)
 * [fp-scanner](https://github.com/fieldpapers/fp-scanner) - the updated scanning / rectification tools (EXPERIMENTAL)
