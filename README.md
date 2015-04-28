@@ -36,6 +36,8 @@ picture, which is where you come in.
 * [fp-printer](https://github.com/fieldpapers/fp-printer) - the updated atlas-creation pipeline (EXPERIMENTAL)
 * [fp-legacy](https://github.com/fieldpapers/fp-legacy) - the existing site, scanning, and atlas creation pipelines
 * [fieldpapers](https://github.com/fieldpapers/fieldpapers) - the umbrella project, for tracking issues, etc.
+* [fp-tiler](https://github.com/fieldpapers/fp-tiler) - the tile server.
+* [tilelive-fieldpapers](https://github.com/fieldpapers/tilelive-fieldpapers) - the tilelive module that drives the tile server.
 
 ## For Multi-lingual Individuals
 
