@@ -52,6 +52,19 @@ Web site translation status:
 
 [![Translation Status (www)](https://www.transifex.com/projects/p/fieldpapers/resource/www/chart/image_png)](https://www.transifex.com/projects/p/fieldpapers/resource/www/)
 
+Field Papers uses [Devise](https://github.com/plataformatec/devise) for
+managing users. As a result, we can share translations with other projects.
+Translations are managed using [Locale](https://www.localeapp.com/):
+[devise-i18n](https://www.localeapp.com/projects/377)
+([GH](https://github.com/tigrish/devise-i18n)),
+[devise-i18n-views](https://www.localeapp.com/projects/2263)
+([GH](https://github.com/mcasimir/devise-i18n-views)).
+
+If you encounter strings on the site that don't appear to have corresponding
+entries in Transifex or Locale, please [open an
+issue](https://github.com/fieldpapers/fieldpapers/issues/new) so we can track
+them down.
+
 ## For Web Developers
 
 The Field Papers web site is a standard Rails application, chosen to minimize
