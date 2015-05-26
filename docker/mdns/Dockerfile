@@ -11,6 +11,9 @@ RUN \
   apt-get -y install avahi-daemon && \
   apt-get clean
 
-ADD avahi-daemon.conf /etc/avahi/avahi-daemon.conf
+RUN \
+  sed -i -e 's/#enable-dbus=yes/enable-dbus=no/' /etc/avahi/avahi-daemon.conf
 
-CMD /usr/sbin/avahi-daemon
+CMD \
+  sed -i -e 's/#?host-name=.*/host-name=${HOSTNAME}/' /etc/avahi/avahi-daemon.conf && \
+  /usr/sbin/avahi-daemon
