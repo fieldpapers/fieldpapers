@@ -28,8 +28,7 @@ picture, which is where you come in.
 
 ## Project Breakdown
 
-* The live site (fp-legacy): [fieldpapers.org](http://fieldpapers.org/)
-* The dev site (fp-web, some parts are currently expected to be broken): [stamen-fieldpapers-dev.herokuapp.com](http://next.fieldpapers.org/)
+* The live site: [fieldpapers.org](http://fieldpapers.org/)
 * [The translation project on Transifex](https://www.transifex.com/projects/p/fieldpapers/)
 * [fp-web](https://github.com/fieldpapers/fp-web) - the updated website (Ruby/Rails)
 * [fp-scanner](https://github.com/fieldpapers/fp-scanner) - the updated scanning / rectification tools (EXPERIMENTAL)
@@ -38,6 +37,7 @@ picture, which is where you come in.
 * [fieldpapers](https://github.com/fieldpapers/fieldpapers) - the umbrella project, for tracking issues, etc.
 * [fp-tiler](https://github.com/fieldpapers/fp-tiler) - the tile server.
 * [tilelive-fieldpapers](https://github.com/fieldpapers/tilelive-fieldpapers) - the tilelive module that drives the tile server.
+* [fp-tasks](https://github.com/fieldpapers/fp-tasks) - the task server, which provides a web API on top of the printing and snapshot processing components of fp-legacy.
 
 ## For Multi-lingual Individuals
 
