@@ -1,0 +1,16 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Resource": "arn:aws:ses:$region:$user_id:identity/$mail_origin",
+      "Principal": {"AWS": ["arn:aws:iam::$user_id:role/$role"]},
+      "Action": ["SES:SendEmail", "SES:SendRawEmail"],
+      "Condition": {
+        "StringLike": {
+          "ses:FromAddress": "$mail_origin"
+        }
+      }
+    }
+  ]
+}

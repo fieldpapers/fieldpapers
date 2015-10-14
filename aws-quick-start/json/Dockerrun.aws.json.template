@@ -1,0 +1,52 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "containerDefinitions": [
+    {
+      "name": "tasks",
+      "image": "$docker_repo/fp-tasks",
+      "essential": true,
+      "memory": $tasks_memory,
+      "environment": [
+        { "name": "API_BASE_URL", "value": "http://$base_url_host/" },
+        { "name": "S3_BUCKET_NAME", "value": "$s3_bucket_name" },
+        { "name": "S3_BUCKET_REGION", "value": "$region" }
+      ]
+    },
+    {
+      "name": "web",
+      "image": "$docker_repo/fp-web",
+      "essential": true,
+      "memory": $web_memory,
+      "portMappings": [ { "hostPort": 80, "containerPort": 3000 } ],
+      "links": [ "tasks" ],
+      "environment": [
+        { "name": "RAILS_ENV", "value": "production" },
+        { "name": "SMTP_URL", "value": "smtp://$smtp_access_key:$smtp_secret_key@email-smtp.$region.amazonaws.com:587" },
+        { "name": "API_BASE_URL", "value": "http://$base_url_host" },
+        { "name": "BASE_URL", "value": "DOCKER_LOCAL" },
+        { "name": "TASK_BASE_URL", "value": "http://tasks:8080" },
+        { "name": "TILE_BASE_URL", "value": "http://$base_url_host:8080" },
+        { "name": "SECRET_KEY_BASE", "value": "$secret_key" },
+        { "name": "RAILS_SERVE_STATIC_FILES", "value": "true" },
+        { "name": "S3_BUCKET_NAME", "value": "$s3_bucket_name" },
+        { "name": "AWS_REGION", "value": "$region" },
+        { "name": "MAIL_ORIGIN", "value": "$mail_origin" },
+        { "name": "MAIL_SOURCE_ARN", "value": "arn:aws:ses:$region:$user_id:identity/$mail_origin" },
+        { "name": "URL_HOST", "value": "$base_url_host" },
+        { "name": "AWS_MAIL_SERVER", "value": "email.$region.amazonaws.com" }
+      ],
+      "mountPoints": [ { "sourceVolume": "awseb-logs-web", "containerPath": "/app/log" } ]
+    },
+    {
+      "name": "tiler",
+      "image": "$docker_repo/fp-tiler",
+      "essential": true,
+      "memory": $tiler_memory,
+      "portMappings": [ { "hostPort": 8080, "containerPort": 8080 } ],
+      "links": [ "web" ],
+      "environment": [
+        { "name": "API_BASE_URL", "value": "http://web:3000/" }
+      ]
+    }
+  ]
+}
