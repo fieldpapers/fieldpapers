@@ -47,9 +47,11 @@ read_config()
 # these is set up.
 
 default_region = None
+aws_profile = None
 if len(sys.argv) == 3 and sys.argv[1] == '--profile':
     try:
-        aws = boto3.session.Session(profile_name=sys.argv[2])
+        aws_profile = sys.argv[2]
+        aws = boto3.session.Session(profile_name=aws_profile)
     except:
         print('FAILED TO CREATE AWS SESSION USING PROFILE "' +
               sys.argv[2] + '"')
@@ -66,7 +68,8 @@ elif ('AWS_ACCESS_KEY_ID' in os.environ and
         sys.exit(1)
 elif 'AWS_PROFILE' in os.environ:
     try:
-        aws = boto3.session.Session(profile_name=os.environ['AWS_PROFILE'])
+        aws_profile = os.environ['AWS_PROFILE']
+        aws = boto3.session.Session(profile_name=aws_profile)
     except:
         print('FAILED TO CREATE AWS SESSION USING PROFILE "' +
               os.environ['AWS_PROFILE'] + '"')
@@ -107,8 +110,10 @@ def get_data_loader():
     return Loader(extra_search_paths=[data_folder, Loader.BUILTIN_DATA_PATH],
                   include_default_search_paths=False)
 
-aws._session.register_component('data_loader', get_data_loader())
+def fix_aws_session(aws):
+    aws._session.register_component('data_loader', get_data_loader())
 
+fix_aws_session(aws)
 
 default_region = aws._session.get_config_variable('region')
 user_name = aws.client('iam').get_user()['User']['UserName']
@@ -255,6 +260,14 @@ Service.  (See http://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-email
 
 get_value('aws_region', 'AWS region',
 """AWS region in which to create all resources.""", default=default_region)
+
+if config['aws_region'] != aws._session.get_config_variable('region'):
+    if aws_profile:
+        aws = boto3.session.Session(profile_name=aws_profile,
+                                    region_name=config['aws_region'])
+    else:
+        aws = boto3.session.Session(region_name=config['aws_region'])
+    fix_aws_session(aws)
 
 
 def instance_help(type, name, instances):
