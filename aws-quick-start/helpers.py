@@ -107,11 +107,13 @@ def create_app_role(aws, region, app_role, app_policy, instance_profile,
 def create_s3_bucket(aws, s3_bucket_name, region):
     try:
         s3 = aws.client('s3')
-        b = s3.create_bucket(Bucket=s3_bucket_name,
-                             ACL='private',
-                             CreateBucketConfiguration={
-                                 'LocationConstraint': region
-                             })
+        if region == 'us-east-1':
+            b = s3.create_bucket(Bucket=s3_bucket_name, ACL='private')
+        else:
+            b = s3.create_bucket(Bucket=s3_bucket_name, ACL='private',
+                                 CreateBucketConfiguration={
+                                     'LocationConstraint': region
+                                 })
         s3.put_bucket_cors(Bucket=s3_bucket_name,
                            CORSConfiguration={
                                'CORSRules': [
@@ -206,14 +208,15 @@ def create_eb_environment(aws, region, env_name, app_name, cname_prefix,
                           instance_profile, service_role, db_instance_type):
     eb = aws.client('elasticbeanstalk')
     try:
+        stack = [s for s in eb.list_available_solution_stacks()['SolutionStacks']
+                 if s.find('Multi-container Docker 1.6.2') >= 0][0]
         env = eb.create_environment(
             ApplicationName=app_name,
             EnvironmentName=env_name,
             CNAMEPrefix=cname_prefix,
             Tier={'Type': 'Standard', 'Name': 'WebServer', 'Version': ' '},
             VersionLabel=app_version_label,
-            SolutionStackName=('64bit Amazon Linux 2015.03 v2.0.1 running '
-                               'Multi-container Docker 1.6.2 (Generic)'),
+            SolutionStackName=stack,
             TemplateSpecification={
                 'TemplateSnippets': [
                     { 'SnippetName': 'RdsExtensionEB',
