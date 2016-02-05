@@ -284,8 +284,18 @@ def make_dockerrun(region, instance_type, s3_bucket_name,
                    mail_origin, base_url_host, secret_key, user_id):
     tmpl = Template(jsonf('Dockerrun.aws.json.template'))
     mem = calculate_memory_allocation(instance_type)
-    repo = os.environ['FP_DOCKER_REPO'] if 'FP_DOCKER_REPO' in os.environ else 'fieldpapers'
-    return tmpl.substitute(docker_repo=repo,
+    if 'FP_DOCKER_REPO' in os.environ:
+        repo = os.environ['FP_DOCKER_REPO']
+        tasks_image = repo + '/fp-tasks'
+        tiler_image = repo + '/fp-tiler'
+        web_image = repo + '/fp-web'
+    else:
+        tasks_image = 'fieldpapers/tasks:v0.3.2'
+        tiler_image = 'fieldpapers/tiler:v0.1.1'
+        web_image = 'skybluetrades/fp-web'
+    return tmpl.substitute(tasks_image=tasks_image,
+                           tiler_image=tiler_image,
+                           web_image=web_image,
                            tasks_memory=mem['tasks'],
                            web_memory=mem['web'],
                            tiler_memory=mem['tiler'],

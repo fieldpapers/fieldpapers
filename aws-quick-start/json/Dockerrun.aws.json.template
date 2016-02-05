@@ -3,7 +3,7 @@
   "containerDefinitions": [
     {
       "name": "tasks",
-      "image": "$docker_repo/fp-tasks",
+      "image": "$tasks_image",
       "essential": true,
       "memory": $tasks_memory,
       "environment": [
@@ -14,7 +14,7 @@
     },
     {
       "name": "web",
-      "image": "$docker_repo/fp-web",
+      "image": "$web_image",
       "essential": true,
       "memory": $web_memory,
       "portMappings": [ { "hostPort": 80, "containerPort": 3000 } ],
@@ -39,7 +39,7 @@
     },
     {
       "name": "tiler",
-      "image": "$docker_repo/fp-tiler",
+      "image": "$tiler_image",
       "essential": true,
       "memory": $tiler_memory,
       "portMappings": [ { "hostPort": 8080, "containerPort": 8080 } ],

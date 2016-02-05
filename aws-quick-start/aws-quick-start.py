@@ -219,6 +219,18 @@ env_name = prefix + 'Env'
 cname_prefix = snprefix + '-env'
 ses_identity_policy = prefix + 'EmailIdentityPolicy'
 
+get_value('aws_region', 'AWS region',
+"""AWS region in which to create all resources.""", default=default_region)
+
+if config['aws_region'] != aws._session.get_config_variable('region'):
+    if aws_profile:
+        aws = boto3.session.Session(profile_name=aws_profile,
+                                    region_name=config['aws_region'])
+    else:
+        aws = boto3.session.Session(region_name=config['aws_region'])
+    fix_aws_session(aws)
+aws_region = config['aws_region']
+
 get_value('endpoint_host', 'Main endpoint host',
 """This is the host part of URL used to access the "front page" of Field
 Papers.  The default value is the public-facing URL of the web server
@@ -228,7 +240,7 @@ to set up a DNS CNAME record to point from the name you want to use to
 the Elastic Beanstalk URL.  (Once everything is set up, the script
 will remind you to do this, and will tell you exactly what should go
 in the CNAME record.)""",
-          default=cname_prefix+'.elasticbeanstalk.com')
+          default=cname_prefix+'.'+aws_region+'.elasticbeanstalk.com')
 
 endpoint_host = config['endpoint_host']
 
@@ -257,17 +269,6 @@ new account, password reset and similar emails.  This should be an
 email address that has been verified for use by AWS's Simple Email
 Service.  (See http://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-email-addresses.html)""",
           check=check_email)
-
-get_value('aws_region', 'AWS region',
-"""AWS region in which to create all resources.""", default=default_region)
-
-if config['aws_region'] != aws._session.get_config_variable('region'):
-    if aws_profile:
-        aws = boto3.session.Session(profile_name=aws_profile,
-                                    region_name=config['aws_region'])
-    else:
-        aws = boto3.session.Session(region_name=config['aws_region'])
-    fix_aws_session(aws)
 
 
 def instance_help(type, name, instances):
@@ -503,7 +504,7 @@ except:
 print('Precompiling Rails assets...')
 try:
     ssh.exec_command('bash -c "WEBID=`docker ps | grep fp-web | cut -d\\  -f1` ; '
-                     'docker exec \\$WEBID rake assets:precompile"')
+                     'docker exec \\$WEBID rake assets:precompile RAILS_ENV=production"')
     ssh.close()
 except:
     print('  FAILED TO PRECOMPILE RAILS ASSETS!')
@@ -542,7 +543,7 @@ print('AWS Elastic Beanstalk application: ' + app_name)
 print('AWS Elastic Beanstalk environment: ' + env_name)
 
 # URL for main endpoint
-if endpoint_host == snprefix+'-env.elasticbeanstalk.com':
+if endpoint_host == cname_prefix+'.'+aws_region+'.elasticbeanstalk.com':
     print('\nYour Field Papers instance should now be accessible at:\n')
     print('    http://' + endpoint_host)
     print()
