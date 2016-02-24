@@ -326,6 +326,49 @@ print(' 7. Create an Elastic Beanstalk environment (with associated RDS instance
 print('      ' + env_name)
 
 
+# Create an Elastic Beanstalk application version files.
+
+# Create Dockerrun.aws.json file.
+secret_key = ''.join([random.choice('0123456789ABCDEF') for n in range(64)])
+user_id = get_user_id(aws)
+dockerrun = make_dockerrun(region, config['instance_type'], s3_bucket_name,
+                           'DUMMY_SMTP_ACCESS_KEY', 'DUMMY_SMTP_SECRET_KEY',
+                           email_origin, endpoint_host, secret_key, user_id)
+
+app_version_label = 'fieldpapers-eb-app-v1'
+app_version_zip = 'fieldpapers-eb-app-v1.zip'
+
+with tempfile.TemporaryDirectory() as tmpdir:
+    # Write Dockerrun.aws.json file.
+    with open(os.path.join(tmpdir, 'Dockerrun.aws.json'), 'w') as fp:
+        print(dockerrun, file=fp)
+
+    # Create .ebextensions directory and files.
+    os.mkdir(os.path.join(tmpdir, '.ebextensions'))
+    with open(os.path.join(tmpdir, '.ebextensions/docker-user.config'), 'w') as fp:
+        print('commands:', file=fp)
+        print('  docker-user:', file=fp)
+        print('    command: gpasswd -a ec2-user docker', file=fp)
+    with open(os.path.join(tmpdir, '.ebextensions/rds.config'), 'w') as fp:
+        print('Resources:', file=fp)
+        print('    AWSEBRDSDatabase:', file=fp)
+        print('        Type: AWS::RDS::DBInstance', file=fp)
+        print('        Properties:', file=fp)
+        print('            AllocatedStorage: 5', file=fp)
+        print('            DBInstanceClass: ' + config['db_instance_type'], file=fp)
+        print('            DBName: fieldpapers', file=fp)
+        print('            Engine: mysql', file=fp)
+        print('            MasterUsername: fieldpapers', file=fp)
+        print('            MasterUserPassword: fieldpapers', file=fp)
+
+    # Create application version ZIP file.
+    with ZipFile(app_version_zip, 'w') as zip:
+        for d, _, fs in os.walk(tmpdir):
+            for f in fs:
+                ff = os.path.join(d, f)
+                zip.write(ff, os.path.relpath(ff, tmpdir))
+
+
 # Check for permission to proceed.
 
 resp = input('\nPermission to proceed?  Type YES to continue: ')
@@ -388,46 +431,6 @@ create_eb_application(aws, app_name)
 
 #--------------------------------------------------
 # 6. Create an Elastic Beanstalk application version
-
-# Create Dockerrun.aws.json file.
-secret_key = ''.join([random.choice('0123456789ABCDEF') for n in range(64)])
-user_id = get_user_id(aws)
-dockerrun = make_dockerrun(region, config['instance_type'], s3_bucket_name,
-                           'DUMMY_SMTP_ACCESS_KEY', 'DUMMY_SMTP_SECRET_KEY',
-                           email_origin, endpoint_host, secret_key, user_id)
-
-app_version_label = 'fieldpapers-eb-app-v1'
-app_version_zip = 'fieldpapers-eb-app-v1.zip'
-
-with tempfile.TemporaryDirectory() as tmpdir:
-    # Write Dockerrun.aws.json file.
-    with open(os.path.join(tmpdir, 'Dockerrun.aws.json'), 'w') as fp:
-        print(dockerrun, file=fp)
-
-    # Create .ebextensions directory and files.
-    os.mkdir(os.path.join(tmpdir, '.ebextensions'))
-    with open(os.path.join(tmpdir, '.ebextensions/docker-user.config'), 'w') as fp:
-        print('commands:', file=fp)
-        print('  docker-user:', file=fp)
-        print('    command: gpasswd -a ec2-user docker', file=fp)
-    with open(os.path.join(tmpdir, '.ebextensions/rds.config'), 'w') as fp:
-        print('Resources:', file=fp)
-        print('    AWSEBRDSDatabase:', file=fp)
-        print('        Type: AWS::RDS::DBInstance', file=fp)
-        print('        Properties:', file=fp)
-        print('            AllocatedStorage: 5', file=fp)
-        print('            DBInstanceClass: ' + config['db_instance_type'], file=fp)
-        print('            DBName: fieldpapers', file=fp)
-        print('            Engine: mysql', file=fp)
-        print('            MasterUsername: fieldpapers', file=fp)
-        print('            MasterUserPassword: fieldpapers', file=fp)
-
-    # Create application version ZIP file.
-    with ZipFile(app_version_zip, 'w') as zip:
-        for d, _, fs in os.walk(tmpdir):
-            for f in fs:
-                ff = os.path.join(d, f)
-                zip.write(ff, os.path.relpath(ff, tmpdir))
 
 # Upload application version ZIP file to S3 bucket.
 print('\nUploading application version ZIP file...')

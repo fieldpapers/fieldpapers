@@ -23,7 +23,7 @@
         { "name": "RAILS_ENV", "value": "production" },
         { "name": "SMTP_URL", "value": "smtp://$smtp_access_key:$smtp_secret_key@email-smtp.$region.amazonaws.com:587" },
         { "name": "API_BASE_URL", "value": "http://$base_url_host" },
-        { "name": "BASE_URL", "value": "DOCKER_LOCAL" },
+        { "name": "BASE_URL", "value": "http://$base_url_host" },
         { "name": "TASK_BASE_URL", "value": "http://tasks:8080" },
         { "name": "TILE_BASE_URL", "value": "http://$base_url_host:8080" },
         { "name": "SECRET_KEY_BASE", "value": "$secret_key" },
