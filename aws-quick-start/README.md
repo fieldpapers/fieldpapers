@@ -67,10 +67,10 @@ This is the email address that will be used by Field Papers to send
 new account, password reset and similar emails.  This should be an
 email address that has been verified for use by AWS's Simple Email
 Service.  See
-[here](http://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-email-addresses.html)
+[here](https://docs.aws.amazon.com/ses/latest/dg/creating-identities.html#just-verify-email-proc)
 for details and note that you will only be able to send email to
 verified email addresses until you request lifting of Amazon's [email
-sending sandbox restrictions](http://docs.aws.amazon.com/ses/latest/DeveloperGuide/request-production-access.html).
+sending sandbox restrictions](https://docs.aws.amazon.com/ses/latest/dg/request-production-access.html).
 
 ### AWS region
 
