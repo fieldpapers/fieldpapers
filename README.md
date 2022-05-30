@@ -11,7 +11,7 @@ field.
 In its current form, this translates to the creation of multi-page PDFs
 (intended for varying paper sizes), ideally at high resolution, using map
 sources and overlays that follow [Slippy
-Map](http://wiki.openstreetmap.org/wiki/Slippy_Map) file naming conventions.
+Map](https://wiki.openstreetmap.org/wiki/Slippy_Map) file naming conventions.
 Furthermore, each page includes a QR code with a link to a page that describes
 the content of that page (in both human- and computer-readable forms).
 
@@ -72,7 +72,7 @@ the amount of effort required to implement standard features (Rails has
 a fantastic ecosystem of plugins for concerns ranging from pagination to user
 account management). The front-end is similarly intended to be simple, with the
 majority of effort spent on configuring and extended
-[Leaflet](http://leafletjs.com/) for our purposes.
+[Leaflet](https://leafletjs.com/) for our purposes.
 
 Have a look at the [issue list](https://github.com/fieldpapers/fieldpapers/issues)
 and see if there are things that appeal or seem doable. If there's insufficient
