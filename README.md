@@ -1,7 +1,5 @@
 # Helping
 
-[![Join the chat at https://gitter.im/fieldpapers/fieldpapers](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/fieldpapers/fieldpapers?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 So, you want to help with Field Papers. Great!
 
 Field Papers is fundamentally about facilitating the production of printed
