@@ -1,117 +1,156 @@
-# Helping
+# Introduction
 
-So, you want to help with Field Papers. Great!
+This script sets up a "quick start" installation of Field Papers using
+the Amazon Web Services Elastic Beanstalk service.
 
-Field Papers is fundamentally about facilitating the production of printed
-(web) maps and providing a means to capture data that has been collected in the
-field.
 
-In its current form, this translates to the creation of multi-page PDFs
-(intended for varying paper sizes), ideally at high resolution, using map
-sources and overlays that follow [Slippy
-Map](https://wiki.openstreetmap.org/wiki/Slippy_Map) file naming conventions.
-Furthermore, each page includes a QR code with a link to a page that describes
-the content of that page (in both human- and computer-readable forms).
+# Prerequisites
 
-The existence of quick, purpose-built paper maps that can be annotated is often
-sufficient, but FP goes a step further and will take the offline online.
+This script requires Python 3 (specifically, it has been tested
+against Python 3.4).
 
-Pages may be turned into snapshots by scanning them or taking photos and then
-uploading them. These images will be geo-rectified and turned into a slippy map
-layer suitable for browsing or as an overlay in a tool like QGIS, iD, or JOSM.
-(They're also available for download as GeoTIFFs.)
+Package prerequisites can be installed by doing:
 
-That's basically it. Obviously additional features / tweaks complete the
-picture, which is where you come in.
+```
+pip install -r requirements.txt
+```
 
-## Project Breakdown
+(This will install the `boto3` AWS client library and the `paramiko`
+SSH client library.)
 
-* The live site: [fieldpapers.org](http://fieldpapers.org/)
-* [The translation project on Transifex](https://www.transifex.com/projects/p/fieldpapers/)
-* [fp-web](https://github.com/fieldpapers/fp-web) - the updated website (Ruby/Rails)
-* [fp-scanner](https://github.com/fieldpapers/fp-scanner) - the updated scanning / rectification tools (EXPERIMENTAL)
-* [fp-printer](https://github.com/fieldpapers/fp-printer) - the updated atlas-creation pipeline (EXPERIMENTAL)
-* [fp-legacy](https://github.com/fieldpapers/fp-legacy) - the existing site, scanning, and atlas creation pipelines
-* [fieldpapers](https://github.com/fieldpapers/fieldpapers) - the umbrella project, for tracking issues, etc.
-* [fp-tiler](https://github.com/fieldpapers/fp-tiler) - the tile server.
-* [tilelive-fieldpapers](https://github.com/fieldpapers/tilelive-fieldpapers) - the tilelive module that drives the tile server.
-* [fp-tasks](https://github.com/fieldpapers/fp-tasks) - the task server, which provides a web API on top of the printing and snapshot processing components of fp-legacy.
 
-## For Multi-lingual Individuals
+# Usage
 
-Field Papers is often used on the ground in disaster-stricken areas and the
-developing world, and not everyone speaks English. Field Papers is intended to
-be translated, so please help! We have a [Field Papers project on
-Transifex](https://www.transifex.com/projects/p/fieldpapers/) that you can
-contribute to. Even partial translations are better than none, so let's get
-started!
+First, you need to set up AWS credentials that will be used to create
+the resources used by the Field Papers application.  The Field Papers
+application itself does *not* run with these credentials -- it uses an
+AWS instance profile with a very restricted set of permissions (see
+the `json/eb-policy.json.template` file) -- but credentials are
+required to create the AWS resources needed to run the application.
+You can specify these AWS credentials in one of three ways:
 
-Web site translation status:
+1. Create a credential profile (using the `aws configure` CLI command)
+   and run the `aws-quick-start.py` script as: `aws-quick-start.py
+   --profile <profile-name>`.
 
-[![Translation Status (www)](https://www.transifex.com/projects/p/fieldpapers/resource/www/chart/image_png)](https://www.transifex.com/projects/p/fieldpapers/resource/www/)
+2. Create a credential profile, set the `AWS_PROFILE` environment
+   variable to the name of the profile and run the
+   `aws-quick-start.py` script without arguments.
 
-Field Papers uses [Devise](https://github.com/plataformatec/devise) for
-managing users. As a result, we can share translations with other projects.
-Translations are managed using [Locale](https://www.localeapp.com/):
-[devise-i18n](https://www.localeapp.com/projects/377)
-([GH](https://github.com/tigrish/devise-i18n)),
-[devise-i18n-views](https://www.localeapp.com/projects/2263)
-([GH](https://github.com/mcasimir/devise-i18n-views)).
+3. Set the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment
+   variables to the AWS access key and secret key you want to use and
+   run the `aws-quick-start.py` script without arguments.
 
-If you encounter strings on the site that don't appear to have corresponding
-entries in Transifex or Locale, please [open an
-issue](https://github.com/fieldpapers/fieldpapers/issues/new) so we can track
-them down.
+Then supply the following information to the script:
 
-## For Web Developers
+### Name prefix
 
-The Field Papers web site is a standard Rails application, chosen to minimize
-the amount of effort required to implement standard features (Rails has
-a fantastic ecosystem of plugins for concerns ranging from pagination to user
-account management). The front-end is similarly intended to be simple, with the
-majority of effort spent on configuring and extended
-[Leaflet](https://leafletjs.com/) for our purposes.
+This prefix is used to generate names for all the AWS entities to be
+created.  For example, if the prefix is `CadastaTest`, then the main
+IAM role for running the Field Papers instances will be called
+`CadastaTestRole`, and so on.  Must be alphanumeric.
 
-Have a look at the [issue list](https://github.com/fieldpapers/fieldpapers/issues)
-and see if there are things that appeal or seem doable. If there's insufficient
-information, ask for more!
+### Main endpoint host
 
-## For Designers
+This is the host part of URL used to access the "front page" of Field
+Papers.  The default value is the public-facing URL of the web server
+Elastic Beanstalk instance the script will launch.  If you want to use
+a custom URL instead in a domain that you control, you will need to
+set up a DNS CNAME record to point from the name you want to use to
+the Elastic Beanstalk URL.  (Once everything is set up, the script
+will remind you to do this, and will tell you exactly what should go
+in the CNAME record.)
 
-Field Papers' current design represents its minimalist past. While we intend to
-keep it simple (especially for users on low-bandwidth connections), that
-doesn't mean we can't add a bit of flair. The same goes for the design of the
-printed atlases--they originally used Python (and Cairo) to produce PDFs, but
-are now using HTML, which expands our options.
+### Originating email address
 
-## For Computer Vision Enthusiasts
+This is the email address that will be used by Field Papers to send
+new account, password reset and similar emails.  This should be an
+email address that has been verified for use by AWS's Simple Email
+Service.  See
+[here](https://docs.aws.amazon.com/ses/latest/dg/creating-identities.html#just-verify-email-proc)
+for details and note that you will only be able to send email to
+verified email addresses until you request lifting of Amazon's [email
+sending sandbox restrictions](https://docs.aws.amazon.com/ses/latest/dg/request-production-access.html).
 
-The [scanner component](https://github.com/fieldpapers/fp-scanner) uses OpenCV
-to extract and geo-reference maps from images. There's surely more we can do to
-digitize field annotations!
+### AWS region
 
-## For Ops People
+The AWS region in which to create all resources.
 
-We haven't tackled instrumentation and monitoring yet and we're not totally
-clear on how we're going to deploy (Heroku is a reasonable default, and we're
-aiming to provide `Dockerfile`s for each component). Weigh in with your
-expertise and help us figure out the best approach.
+### EC2 instance type for Field Papers processes
 
-Field Papers isn't just fieldpapers.org, as some organizations have configured
-it in "appliance-mode" before deploying it into the field. Let's do what we can
-to keep this process smooth.
+The instance type to use for creating the Elastic Beanstalk
+environment in which the Field Papers application runs.  This script
+runs all of the Field Papers application components in a single EC2
+instance, so the instance must be large enough to accommodate this (a
+`t2.small` instance is large enough for a test deployment).
 
-## For Everyone Else
+### RDS instance type for MySQL database
 
-If you're using Field Papers, we care about how you're using it. If you're
-finding bugs, [let us
-know](https://github.com/fieldpapers/fieldpapers/issues/new) and help us fix
-them. If you have ideas about features that would make your life easier, write
-them up as proposals (explaining _how_ they would be useful, particularly in
-the field, is very helpful) and add them either as GitHub issues or on the wiki
-(we're still figuring this out) and see what you can do to drum up feedback and
-support.
+The MySQL database used by the Field Papers application is set up in a
+seperate RDS instance.  In this case, a `db.t2.micro` instance is
+large enough for a test deployment.
 
-Documentation in its many forms is also immensely welcomed, whether it's how to
-use Field Papers with QGIS or collections of good ways to use it in your local
-community.
+### S3 bucket name
+
+Field Papers stores PDFs for atlas pages, uploaded snapshots and
+georeferenced processed snapshots in an AWS S3 bucket.  These names
+must be globally unique.
+
+
+# Setup process
+
+Once the above information is supplied, the script will ask for
+confirmation before proceeding to create AWS resources.  (An existing
+setup generated by the script can be deleted by answering "DELETE" to
+the confirmation question.)
+
+Once confirmation is given, the script sets up the following AWS
+resources:
+
+ * A key pair for accessing the EC2 instance;
+ * IAM policies and roles for managing the permitted actions of the
+   Field Papers application;
+ * An S3 bucket;
+ * An Elastic Beanstalk application;
+ * An Elastic Beanstalk environment with associated RDS database
+   instance.
+
+Creating the Elastic Beanstalk environment can take quite a long time
+(sometimes 20 minutes or more) since AWS needs to create the RDS
+database instance as well as all the other infrastructure supporting
+the Elastic Beanstalk environment.  You can watch the individual
+resources being created by logging into the AWS Console in your
+browser and going to the Elastic Beanstalk page.
+
+The setup script waits for the Elastic Beanstalk environment to become
+ready (*do NOT interrupt the script at this point!*) then performs
+some post-setup tasks: initialisation of the Field Papers Rails web
+application, opening up port 8080 on the EC2 instance for the Field
+Papers tiler, and setting up the SES email identity policy that allows
+the Field Papers application to send email from AWS.
+
+Once all the setup is done, the script displays the URL at which the
+Field Papers instance can be accessed (along with any necessary DNS
+CNAME record setup required to make that work) and shows how to SSH to
+the EC2 instance running the Field Papers application (using the SSH
+keys generated during the setup process).
+
+
+# Some details
+
+ * The Elastic Beanstalk environment is set up using the
+   "Multi-container Docker" application type.
+ * Memory allocation to the individual Docker containers is done on a
+   heuristic basis, starting from the total amount of memory available
+   on the selected EC2 instance type.
+ * Docker images for Field Papers components (`fp-web`, `fp-tasks` and
+   `fp-tiler`) are taken by default from the `cadasta` repository on
+   the Docker Hub.  These images are configured differently to the
+   default `fieldpapers` images in order to work on AWS.  The
+   repository can be modified if required by setting the
+   `FP_DOCKER_REPO` environment variable.
+ * The Elastic Beanstalk "application version" ZIP file is left in
+   `fieldpapers-ev-app-v1.zip` after setup.  This can be useful for
+   subsequeny redeployment to Elastic Beanstalk (using the Elastic
+   Beanstalk console) if required (if Docker images are changed, for
+   instance).
