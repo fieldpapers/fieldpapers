@@ -1,4 +1,13 @@
-# Helping
+This is an umbrella project for collaborating on Field Papers.
+
+## Quick links
+- [🔗 fieldpapers.org](https://fieldpapers.org)
+- [📋 Project overview](https://github.com/fieldpapers)
+- [🐞 Issues and bug reports](https://github.com/fieldpapers/fieldpapers/issues)
+- [🌐 Translations](https://explore.transifex.com/fieldpapers/fieldpapers/)
+- [🤝 Code of Conduct](https://wiki.openstreetmap.org/wiki/Foundation/Local_Chapters/United_States/Code_of_Conduct_Committee/OSM_US_Code_of_Conduct)
+
+## Helping
 
 So, you want to help with Field Papers. Great!
 
