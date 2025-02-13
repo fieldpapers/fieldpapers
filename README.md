@@ -55,10 +55,6 @@ Transifex](https://www.transifex.com/projects/p/fieldpapers/) that you can
 contribute to. Even partial translations are better than none, so let's get
 started!
 
-Web site translation status:
-
-[![Translation Status (www)](https://www.transifex.com/projects/p/fieldpapers/resource/www/chart/image_png)](https://www.transifex.com/projects/p/fieldpapers/resource/www/)
-
 Field Papers uses [Devise](https://github.com/plataformatec/devise) for
 managing users. As a result, we can share translations with other projects.
 Translations are managed using [Locale](https://www.localeapp.com/):
